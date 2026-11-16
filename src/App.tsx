@@ -9,6 +9,7 @@ export default function App() {
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const lineRefs = useRef<ISeriesApi<'Line'>[]>([]);
+  const markersRef = useRef<ReturnType<typeof createSeriesMarkers> | null>(null);
   const [script, setScript] = useState(DEFAULT_SCRIPT);
   const [candles, setCandles] = useState<Candle[]>([]);
   const [result, setResult] = useState<RunResult | null>(null);
@@ -33,6 +34,8 @@ export default function App() {
   useEffect(() => {
     if (!candleRef.current || !visible.length) return;
     candleRef.current.setData(visible.map(c => ({ time: c.time as Time, open: c.open, high: c.high, low: c.low, close: c.close })));
+    if (!markersRef.current) markersRef.current = createSeriesMarkers(candleRef.current, []);
+    markersRef.current.setMarkers((result?.signals ?? []).filter(s => s.index < visible.length).map(s => ({ time: candles[s.index].time as Time, position: s.side === 'BUY' ? 'belowBar' : 'aboveBar', color: s.side === 'BUY' ? '#22c99a' : '#ef5350', shape: s.side === 'BUY' ? 'arrowUp' : 'arrowDown', text: s.side })));
     lineRefs.current.forEach(s => chartRef.current?.removeSeries(s)); lineRefs.current = [];
     if (result) result.plots.forEach(p => {
       const series = chartRef.current!.addSeries(LineSeries, { color: p.color, lineWidth: 2, title: p.title, priceLineVisible: false, lastValueVisible: true });
