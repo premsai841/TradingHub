@@ -20,7 +20,7 @@ plotshape(sellSignal, title="Sell", style=shape.triangledown, location=location.
 export { DEFAULT_SCRIPT };
 
 function lengthOf(script: string, name: string, fallback: number): number {
-  const match = script.match(new RegExp(name + String.raw`\\s*=\\s*input\\.int\\(\\s*(\\d+)`));
+  const match = script.match(new RegExp(name + String.raw`\s*=\s*input\.int\(\s*(\d+)`));
   return match ? Math.max(1, Math.min(500, Number(match[1]))) : fallback;
 }
 function ema(values: number[], length: number): (number | null)[] {
@@ -37,7 +37,7 @@ function sma(values: number[], length: number): (number | null)[] {
   return values.map((_, i) => i < length - 1 ? null : values.slice(i - length + 1, i + 1).reduce((a, b) => a + b, 0) / length);
 }
 function colorFrom(script: string, variable: string, fallback: string): string {
-  const line = script.match(new RegExp(String.raw`plot\\(\\s*${variable}\\s*,[^\\n]*color\\s*=\\s*color\\.(\\w+)`));
+  const line = script.match(new RegExp(String.raw`plot\(\s*${variable}\s*,[^\n]*color\s*=\s*color\.(\w+)`));
   const named: Record<string, string> = { aqua: '#22d3ee', orange: '#f59e0b', lime: '#84cc16', red: '#ef4444', blue: '#3b82f6', yellow: '#eab308', white: '#ffffff', fuchsia: '#d946ef', teal: '#14b8a6', gray: '#9ca3af' };
   return line ? (named[line[1]] ?? fallback) : fallback;
 }
