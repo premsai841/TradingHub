@@ -20,7 +20,7 @@ export async function loadCandles(symbol = 'BTCUSDT', interval = '1m'): Promise<
     const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=500`);
     if (!response.ok) throw new Error('Market data request failed');
     const raw: unknown[][] = await response.json();
-    return raw.map(k => ({ time: Math.floor(Number(k[0]) / 1000), open: +k[1], high: +k[2], low: +k[3], close: +k[4], volume: +k[5] }));
+    return raw.map(k => ({ time: Math.floor(Number(k[0]) / 1000), open: Number(k[1]), high: Number(k[2]), low: Number(k[3]), close: Number(k[4]), volume: Number(k[5]) }));
   } catch {
     return makeDemoCandles();
   }
